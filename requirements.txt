@@ -1,0 +1,6 @@
+# Python dependencies for Movie Org (Media Manager)
+Pillow>=9.0.0
+ttkthemes>=3.0.0
+
+# Note: tkinter is included with most Python installations on Linux/macOS.
+# Windows users typically get tkinter with the Python installer.
