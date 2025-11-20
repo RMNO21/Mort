@@ -1,68 +1,121 @@
-# Movie Org — Media Manager (Revamp)
+# 🎬 Movie Org — Media Manager Revamp
 
-A Python Tkinter-based media management tool that scans folders for media files (images, videos, audio), stores metadata in a local SQLite database, generates thumbnails, and provides a simple UI for browsing and organizing your media library.
+**Movie Org** is a Python Tkinter‑based media management tool that helps you organize your personal media library. It scans folders for images, videos, and audio files, stores metadata in a local SQLite database, generates thumbnails, and provides a simple UI for browsing and managing your collection.
 
-## Features
+---
 
-- Scan and catalog media files from one or more folders
-- Automatic thumbnail generation for images and videos
-- Quick search, grouping by Movies or TV Shows, and a list or thumbnail view
-- Basic organizing tools to move/copy files into a structured library
-- Lightweight SQLite database with a small, local footprint
+## ✨ Features
 
-## Prerequisites
+- **Scan and catalog** media files from one or more folders  
+- **Quick search and filtering** by Movies or TV Shows  
+- **Organizing tools**: move or copy files into a structured library  
+- **Lightweight SQLite database** with minimal local footprint  
+- **Cross‑platform support**: Linux, Windows, macOS  
 
-- Python 3.8+ (tested with 3.x)
-- Tkinter (typically bundled with Python)
-- Pillow (PIL) for image handling
-- ttkthemes for improved UI aesthetics
-- SQLite (built-in in Python)
+---
 
-## Installation (Linux)
+## 📦 Prerequisites
 
-1. Ensure Python 3 and Tkinter are installed:
-   - `sudo apt-get update`
-   - `sudo apt-get install python3 python3-tk python3-pip`
+- **Python 3.8+**  
+- **Tkinter** (bundled with most Python distributions, may need manual install on some systems)  
+- **Pillow (PIL)** for image handling  
+- **ttkthemes** for improved UI aesthetics  
+- **SQLite** (built into Python)  
+- **Git** for cloning the repository  
 
-2. Install Python dependencies:
-   - `pip3 install -r requirements.txt`
+---
 
-3. Run the application:
-   - `python3 src/movies.py`
+## ⚙️ Installation
 
-Optional: Create a virtual environment to isolate dependencies:
-- `python3 -m venv venv`
-- `source venv/bin/activate` (or `venv\Scripts\activate` on Windows)
-- `pip install -r requirements.txt`
+### Quick One‑Liner Setup
 
-## Installation (Windows)
+**Linux/macOS**
 
-1. Install Python 3.x from https://www.python.org (ensure "Add Python to PATH" is checked).
+```bash
+git clone https://github.com/RMNO21/Mort.git && cd Mort && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt && python3 src/movies.py
+```
 
-2. Open Command Prompt and install dependencies:
-   - `pip install -r requirements.txt`
+**Windows PowerShell**
 
-3. Run the application:
-   - `python src\movies.py`
+```powershell
+git clone https://github.com/RMNO21/Mort.git; cd Mort; python -m venv venv; .\venv\Scripts\activate; pip install -r requirements.txt; python src\movies.py
+```
 
-Note: Windows users may need to install Tkinter separately if it isn't included with the Python distribution.
+---
 
-## Usage
+### Linux
 
-- Launch the app, then use "Add Folder" to point it at media sources.
-- Use "Refresh" to scan and populate the library.
-- Filter by Movies or TV Shows, or switch to thumbnail view for a visual library.
-- Right-click items to open, reveal, or delete.
+```bash
+sudo apt-get update
+sudo apt-get install python3 python3-tk python3-pip git
+git clone https://github.com/RMNO21/Mort.git
+cd Mort
+pip3 install -r requirements.txt
+python3 src/movies.py
+```
 
-## Configuration
+---
 
-- The app stores settings in `mm_settings.json` in the project root.
-- Thumbnails are cached under `.thumbs_revamp`.
+### Windows
 
-## Contributing
+```cmd
+git clone https://github.com/RMNO21/Mort.git
+cd Mort
+pip install -r requirements.txt
+python src\movies.py
+```
 
-Contributions are welcome. Please open an issue or pull request with a clear description of the change.
+---
 
-## License
+### macOS
 
-This project is licensed under the GNU General Public License v3.0 or later. See the LICENSE file for details.
+```bash
+brew install python3 git
+git clone https://github.com/RMNO21/Mort.git
+cd Mort
+pip3 install -r requirements.txt
+python3 src/movies.py
+```
+
+---
+
+## 🚀 Usage
+
+- Launch the app and use **Add Folder** to select media sources  
+- Click **Refresh** to scan and populate the library  
+- Filter by **Movies** or **TV Shows**  
+- Switch to **Thumbnail View** for a visual library  
+- Right‑click items to **Open**, **Reveal in Finder/Explorer**, or **Delete**  
+
+---
+
+## ⚙️ Configuration
+
+- Settings are stored in **`mm_settings.json`** in the project root  
+- Thumbnails are cached under **`.thumbs_revamp`**  
+- Database is lightweight and stored locally  
+
+---
+
+## 🛠️ Troubleshooting
+
+- **Tkinter not found** → Install `python3-tk` (Linux) or ensure Tkinter is included in your Python distribution  
+- **Dependencies missing** → Run `pip install -r requirements.txt` again  
+- **Permission errors** → Run with elevated privileges or adjust folder permissions  
+- **Thumbnail issues** → Delete `.thumbs_revamp` and refresh  
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome!  
+- Fork the repo  
+- Create a feature branch  
+- Submit a pull request with a clear description  
+
+---
+
+## 📜 License
+
+This project is licensed under the **GNU General Public License v3.0 or later**.  
+See the LICENSE file for details.  
