@@ -46,12 +46,24 @@ git clone https://github.com/RMNO21/Mort.git; cd Mort; python -m venv venv; .\ve
 ### Linux
 
 ```bash
+# Install required system packages
 sudo apt-get update
-sudo apt-get install python3 python3-tk python3-pip git
+sudo apt-get install python3 python3-full python3-venv python3-tk python3-pip git
+
+# Clone the repository
 git clone https://github.com/RMNO21/Mort.git
 cd Mort
-pip3 install -r requirements.txt
-python3 src/movies.py
+
+# Create and activate a virtual environment
+python3 -m venv venv
+source venv/bin/activate
+
+# Upgrade pip and install dependencies
+pip install --upgrade pip
+pip install -r requirements.txt
+
+# Run the application
+python src/movies.py
 ```
 
 ---
