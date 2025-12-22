@@ -7,6 +7,10 @@
 `Mort` is a Python script to organize your TV shows and movies. It scans specified directories for `.mkv` files, detects TV shows based on season and episode patterns, and moves files into a structured folder hierarchy while keeping the original filenames intact.
 
 ---
+<img width="1239" height="591" alt="image" src="https://github.com/user-attachments/assets/f945e7c3-c47b-464e-90a0-db4d49595cae" />
+
+
+---
 
 ## Features
 
