@@ -1,9 +1,13 @@
+import json
 import os
 import re
 import shutil
+import sys
 import threading
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
+
+CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), "mort_config.json")
 
 SKIP_DIRS = {
     "$Recycle.Bin", "Windows", "Program Files", "Program Files (x86)",
@@ -123,6 +127,38 @@ class MediaOrganizer(tk.Tk):
 
         self._setup_styles()
         self._build_ui()
+        self._load_config()
+
+    def _load_config(self):
+        if not os.path.exists(CONFIG_PATH):
+            return
+        try:
+            with open(CONFIG_PATH, "r") as f:
+                cfg = json.load(f)
+            for d in cfg.get("sources", []):
+                if os.path.isdir(d) and d not in self.source_dirs:
+                    self.source_dirs.append(d)
+                    self.dir_listbox.insert(tk.END, d)
+            if cfg.get("destination"):
+                self.dest_var.set(cfg["destination"])
+            for ext, val in cfg.get("extensions", {}).items():
+                if ext in self.ext_vars:
+                    self.ext_vars[ext].set(val)
+            self._update_action()
+        except Exception:
+            pass
+
+    def _save_config(self):
+        cfg = {
+            "sources": self.source_dirs,
+            "destination": self.dest_var.get(),
+            "extensions": {e: v.get() for e, v in self.ext_vars.items()},
+        }
+        try:
+            with open(CONFIG_PATH, "w") as f:
+                json.dump(cfg, f, indent=2)
+        except Exception:
+            pass
 
     def _setup_styles(self):
         s = ttk.Style(self)
@@ -208,12 +244,14 @@ class MediaOrganizer(tk.Tk):
             self.source_dirs.append(d)
             self.dir_listbox.insert(tk.END, d)
             self._update_action()
+            self._save_config()
 
     def _remove_dir(self):
         for i in reversed(self.dir_listbox.curselection()):
             self.dir_listbox.delete(i)
             del self.source_dirs[i]
         self._update_action()
+        self._save_config()
 
     # ── Destination ──
 
@@ -243,6 +281,7 @@ class MediaOrganizer(tk.Tk):
         if d:
             self.dest_var.set(d)
             self._update_action()
+            self._save_config()
 
     # ── Advanced ──
 
@@ -275,7 +314,8 @@ class MediaOrganizer(tk.Tk):
             tk.Checkbutton(row, text=ext.upper(), variable=var,
                             bg=CARD, fg=TEXT, activebackground=CARD,
                             activeforeground=TEXT, selectcolor=SURFACE,
-                            font=("Consolas", 10), bd=0).pack(
+                            font=("Consolas", 10), bd=0,
+                            command=self._save_config).pack(
                 side=tk.LEFT, padx=(0, 14))
 
     def _toggle_adv(self):
