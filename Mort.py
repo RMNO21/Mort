@@ -7,6 +7,12 @@ import threading
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 
+try:
+    from ctypes import windll
+    windll.shcore.SetProcessDpiAwareness(1)
+except Exception:
+    pass
+
 CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), "mort_config.json")
 
 SKIP_DIRS = {
@@ -116,8 +122,14 @@ class MediaOrganizer(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Mort")
-        self.geometry("820x680")
-        self.minsize(700, 540)
+        sw = self.winfo_screenwidth()
+        sh = self.winfo_screenheight()
+        w = min(860, max(760, sw - 100))
+        h = min(820, max(680, sh - 100))
+        x = max(0, (sw - w) // 2)
+        y = max(0, (sh - h) // 2 - 20)
+        self.geometry(f"{w}x{h}+{x}+{y}")
+        self.minsize(720, 560)
         self.configure(bg=BG)
 
         self.source_dirs = []
@@ -187,11 +199,11 @@ class MediaOrganizer(tk.Tk):
 
     def _build_ui(self):
         outer = tk.Frame(self, bg=BG)
-        outer.pack(fill=tk.BOTH, expand=True, padx=24, pady=20)
+        outer.pack(fill=tk.BOTH, expand=True, padx=20, pady=16)
 
         # Header
         hdr = tk.Frame(outer, bg=BG)
-        hdr.pack(fill=tk.X, pady=(0, 16))
+        hdr.pack(fill=tk.X, pady=(0, 12))
         tk.Label(hdr, text="Mort", bg=BG, fg=WHITE,
                  font=("Segoe UI", 20, "bold")).pack(side=tk.LEFT)
         tk.Label(hdr, text="Media Organizer", bg=BG, fg=MUTED,
@@ -209,31 +221,31 @@ class MediaOrganizer(tk.Tk):
         self._build_progress(outer)
 
     def _sep(self, parent):
-        tk.Frame(parent, bg=BORDER, height=1).pack(fill=tk.X, pady=10)
+        tk.Frame(parent, bg=BORDER, height=1).pack(fill=tk.X, pady=8)
 
     # ── Sources ──
 
     def _build_sources(self, parent):
         card = tk.Frame(parent, bg=CARD, highlightthickness=1,
                          highlightbackground=BORDER)
-        card.pack(fill=tk.X, ipady=4)
+        card.pack(fill=tk.X)
         inner = tk.Frame(card, bg=CARD)
-        inner.pack(fill=tk.X, padx=14, pady=12)
+        inner.pack(fill=tk.X, padx=14, pady=10)
 
         ttk.Label(inner, text="SOURCE DIRECTORIES",
                    style="Section.TLabel").pack(anchor=tk.W)
 
-        self.dir_listbox = tk.Listbox(inner, height=4, bg=SURFACE,
+        self.dir_listbox = tk.Listbox(inner, height=3, bg=SURFACE,
                                        fg=TEXT, selectbackground="#2a2a2a",
                                        selectforeground=TEXT,
                                        font=("Consolas", 10), bd=0,
                                        highlightthickness=1,
                                        highlightbackground=BORDER,
                                        activestyle="none")
-        self.dir_listbox.pack(fill=tk.X, pady=(8, 0))
+        self.dir_listbox.pack(fill=tk.X, pady=(6, 0))
 
         btns = tk.Frame(inner, bg=CARD)
-        btns.pack(fill=tk.X, pady=(8, 0))
+        btns.pack(fill=tk.X, pady=(6, 0))
         self._make_btn(btns, "+ Add", self._add_dir, accent=True).pack(
             side=tk.LEFT, padx=(0, 6))
         self._make_btn(btns, "- Remove", self._remove_dir).pack(side=tk.LEFT)
@@ -260,13 +272,13 @@ class MediaOrganizer(tk.Tk):
                          highlightbackground=BORDER)
         card.pack(fill=tk.X)
         inner = tk.Frame(card, bg=CARD)
-        inner.pack(fill=tk.X, padx=14, pady=12)
+        inner.pack(fill=tk.X, padx=14, pady=10)
 
         ttk.Label(inner, text="DESTINATION",
                    style="Section.TLabel").pack(anchor=tk.W)
 
         row = tk.Frame(inner, bg=CARD)
-        row.pack(fill=tk.X, pady=(8, 0))
+        row.pack(fill=tk.X, pady=(6, 0))
 
         self.dest_var = tk.StringVar()
         e = tk.Entry(row, textvariable=self.dest_var, bg=SURFACE, fg=TEXT,
@@ -299,13 +311,13 @@ class MediaOrganizer(tk.Tk):
                                     highlightbackground=BORDER)
 
         inner = tk.Frame(self.adv_frame, bg=CARD)
-        inner.pack(fill=tk.X, padx=14, pady=12)
+        inner.pack(fill=tk.X, padx=14, pady=10)
 
         ttk.Label(inner, text="FILE TYPES",
                    style="Section.TLabel").pack(anchor=tk.W)
 
         row = tk.Frame(inner, bg=CARD)
-        row.pack(anchor=tk.W, pady=(8, 0))
+        row.pack(anchor=tk.W, pady=(6, 0))
 
         self.ext_vars = {}
         for ext in [".mkv", ".mp4", ".avi", ".mov", ".wmv", ".flv", ".webm", ".m4v"]:
@@ -331,7 +343,7 @@ class MediaOrganizer(tk.Tk):
 
     def _build_action(self, parent):
         f = tk.Frame(parent, bg=BG)
-        f.pack(fill=tk.X, pady=(12, 0))
+        f.pack(fill=tk.X, pady=(8, 0))
 
         self.org_btn = tk.Button(f, text="Scan", command=self._do_scan,
                                   bg=WHITE, fg=BG, activebackground="#cccccc",
@@ -360,7 +372,7 @@ class MediaOrganizer(tk.Tk):
         self.results_frame = tk.Frame(parent, bg=BG)
 
         hdr = tk.Frame(self.results_frame, bg=BG)
-        hdr.pack(fill=tk.X, pady=(0, 6))
+        hdr.pack(side=tk.TOP, fill=tk.X, pady=(0, 6))
         ttk.Label(hdr, text="DETECTED MEDIA",
                    style="Section.TLabel").pack(side=tk.LEFT)
         self._make_btn(hdr, "All", self._select_all, small=True).pack(
@@ -368,13 +380,25 @@ class MediaOrganizer(tk.Tk):
         self._make_btn(hdr, "None", self._deselect_all, small=True).pack(
             side=tk.RIGHT)
 
+        footer = tk.Frame(self.results_frame, bg=BG)
+        footer.pack(side=tk.BOTTOM, fill=tk.X, pady=(8, 0))
+        self.count_lbl = tk.Label(footer, text="", bg=BG, fg=MUTED,
+                                   font=("Segoe UI", 9))
+        self.count_lbl.pack(side=tk.LEFT)
+        self.move_btn = tk.Button(footer, text="Move Files", command=self._do_move,
+                                   bg=ACCENT, fg=WHITE, activebackground="#6ab0ff",
+                                   activeforeground=WHITE, font=("Segoe UI", 10, "bold"),
+                                   bd=0, padx=20, pady=5, cursor="hand2",
+                                   state="disabled")
+        self.move_btn.pack(side=tk.RIGHT)
+
         tree_frame = tk.Frame(self.results_frame, bg=SURFACE, bd=0,
                                highlightthickness=1, highlightbackground=BORDER)
-        tree_frame.pack(fill=tk.BOTH, expand=True)
+        tree_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
         cols = ("sel", "type", "name", "info")
         self.tree = ttk.Treeview(tree_frame, columns=cols, show="headings",
-                                  selectmode="none", height=10,
+                                  selectmode="none", height=6,
                                   style="Treeview")
         self.tree.heading("sel", text="\u2610", anchor=tk.W)
         self.tree.heading("type", text="TYPE", anchor=tk.W)
@@ -390,18 +414,6 @@ class MediaOrganizer(tk.Tk):
         self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         sb.pack(side=tk.RIGHT, fill=tk.Y)
         self.tree.bind("<Button-1>", self._tree_click)
-
-        footer = tk.Frame(self.results_frame, bg=BG)
-        footer.pack(fill=tk.X, pady=(8, 0))
-        self.count_lbl = tk.Label(footer, text="", bg=BG, fg=MUTED,
-                                   font=("Segoe UI", 9))
-        self.count_lbl.pack(side=tk.LEFT)
-        self.move_btn = tk.Button(footer, text="Move Files", command=self._do_move,
-                                   bg=ACCENT, fg=WHITE, activebackground="#6ab0ff",
-                                   activeforeground=WHITE, font=("Segoe UI", 10, "bold"),
-                                   bd=0, padx=20, pady=5, cursor="hand2",
-                                   state="disabled")
-        self.move_btn.pack(side=tk.RIGHT)
 
     def _populate(self, tv, movies):
         for i in self.tree.get_children():
@@ -448,7 +460,13 @@ class MediaOrganizer(tk.Tk):
         self.count_lbl.configure(
             text=f"{total} item{'s' if total!=1 else ''}")
         self.move_btn.configure(state="normal" if total else "disabled")
-        self.results_frame.pack(fill=tk.BOTH, expand=True, pady=(12, 0))
+        self.results_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True, pady=(10, 0))
+
+        cur_h = self.winfo_height()
+        target_h = min(820, self.winfo_screenheight() - 80)
+        if cur_h < target_h:
+            cur_w = self.winfo_width()
+            self.geometry(f"{cur_w}x{target_h}")
 
     def _tree_click(self, event):
         if self.tree.identify_region(event.x, event.y) != "cell":
@@ -502,15 +520,26 @@ class MediaOrganizer(tk.Tk):
                        padx=12 if small else 14, pady=3, cursor="hand2")
         return b
 
+    # ── Progress Helpers ──
+
+    def _show_progress(self, label=""):
+        self.prog_label.configure(text=label)
+        self.prog_bar["value"] = 0
+        self.prog_detail.configure(text="")
+        if self.results_frame.winfo_ismapped():
+            self.prog_frame.pack(before=self.results_frame, side=tk.BOTTOM, fill=tk.X, pady=(8, 0))
+        else:
+            self.prog_frame.pack(side=tk.BOTTOM, fill=tk.X, pady=(8, 0))
+
+    def _hide_progress(self):
+        self.prog_frame.pack_forget()
+
     # ── Scan ──
 
     def _do_scan(self):
         self.org_btn.configure(state="disabled")
         self.move_btn.configure(state="disabled")
-        self.prog_frame.pack(fill=tk.X, pady=(12, 0))
-        self.prog_label.configure(text="Scanning...")
-        self.prog_bar["value"] = 0
-        self.prog_detail.configure(text="")
+        self._show_progress("Scanning...")
         threading.Thread(target=self._scan_thread, daemon=True).start()
 
     def _scan_thread(self):
@@ -525,7 +554,7 @@ class MediaOrganizer(tk.Tk):
         self.after(0, lambda: self._on_scan(tv, mv))
 
     def _on_scan(self, tv, mv):
-        self.prog_frame.pack_forget()
+        self._hide_progress()
         self.org_btn.configure(state="normal")
         total = sum(len(d.get('_files', [])) for d in tv.values()) + len(mv)
         if total == 0:
@@ -560,8 +589,7 @@ class MediaOrganizer(tk.Tk):
 
         self.move_btn.configure(state="disabled")
         self.org_btn.configure(state="disabled")
-        self.prog_frame.pack(fill=tk.X, pady=(12, 0))
-        self.prog_bar["value"] = 0
+        self._show_progress("Moving files...")
         threading.Thread(target=self._move_thread,
                           args=(shows, movies), daemon=True).start()
 
